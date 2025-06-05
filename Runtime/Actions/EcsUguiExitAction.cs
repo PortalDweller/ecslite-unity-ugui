@@ -12,6 +12,7 @@ namespace Leopotam.EcsLite.Unity.Ugui {
                 ref var msg = ref CreateEvent ();
                 msg.WidgetName = GetWidgetName ();
                 msg.Sender = gameObject;
+                msg.Position = eventData.position;
             }
         }
     }
