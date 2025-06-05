@@ -1,73 +1,61 @@
-# LeoECS Lite uGui Bindings - поддержка событий uGui в ECS-мире
-Интеграция событий uGui в ECS-мир.
+# Installation
 
-> **ВАЖНО!** АКТИВНАЯ РАЗРАБОТКА ПРЕКРАЩЕНА, ВОЗМОЖНО ТОЛЬКО ИСПРАВЛЕНИЕ ОБНАРУЖЕННЫХ ОШИБОК. СОСТОЯНИЕ СТАБИЛЬНОЕ, ИЗВЕСТНЫХ ОШИБОК НЕ ОБНАРУЖЕНО. ЗА НОВЫМ ПОКОЛЕНИЕМ ФРЕЙМВОРКА СТОИТ СЛЕДИТЬ В БЛОГЕ https://leopotam.ru/
+## In the form of a unity module
 
-> **ВАЖНО!** ПОДДЕРЖКА БУДЕТ ПРЕКРАЩЕНА И РЕПОЗИТОРИЙ БУДЕТ ОТПРАВЛЕН В АРХИВ 22.04.2026.
+Installation as a unity module via a git link in the PackageManager or direct editing of `Packages/manifest.json` is supported:
 
-> Проверено на Unity 2020.3 (зависит от Unity) и содержит asmdef-описания для компиляции в виде отдельных сборок и уменьшения времени рекомпиляции основного проекта.
-
-> **ВАЖНО!** Зависит от [LeoECS Lite](https://github.com/Leopotam/ecslite) - зависимость должна быть установлена до установки этого модуля.
-
-* [Установка](#Установка)
-    * [В виде unity модуля](#В-виде-unity-модуля)
-    * [В виде исходников](#В-виде-исходников)
-* [Классы](#Классы)
-    * [EcsUguiEmitter](#EcsUguiEmitter)
-    * [EcsUguiCallbackSystem](#EcsUguiCallbackSystem)
-    * [Действия](#Действия)
-    * [Компоненты](#Компоненты)
-* [Лицензия](#Лицензия)
-
-# Социальные ресурсы
-[Блог разработчика](https://leopotam.ru/)
-
-# Установка
-
-## В виде unity модуля
-Поддерживается установка в виде unity-модуля через git-ссылку в PackageManager или прямое редактирование `Packages/manifest.json`:
 ```
-"com.leopotam.ecslite.unity.ugui": "https://github.com/Leopotam/ecslite-unity-ugui.git",
-```
-По умолчанию используется последняя релизная версия. Если требуется версия "в разработке" с актуальными изменениями - следует переключиться на ветку `develop`:
-```
-"com.leopotam.ecslite.unity.ugui": "https://github.com/Leopotam/ecslite-unity-ugui.git#develop",
+"com.portaldweller.ecslite.unity.ugui": "https://github.com/PortalDweller/ecslite-unity-ugui.git",
 ```
 
-## В виде исходников
-Код так же может быть склонирован или получен в виде архива со страницы релизов.
+By default, the latest release version is used. If you need a version "in development" with the latest changes, you should switch to the `develop` branch:
 
-# Классы
+```
+"com.portaldweller.ecslite.unity.ugui": "https://github.com/PortalDweller/ecslite-unity-ugui.git#develop",
+```
+
+## As source
+
+The code can also be cloned or obtained as an archive from the releases page.
+
+# Classes
 
 ## EcsUguiEmitter
-`EcsUiEmitter` является `MonoBehaviour`-классом, отвечающим за генерацию ECS-событий на основе uGui-событий (нажатие, отпускание, перетаскивание и т.п).
-Должен быть размещен на корневом `GameObject`-е UI-иерархии (или хотя бы на корневом `Canvas`-е) и подключен к ECS-инфраструктуре через инспектор:
-```c#
+
+`EcsUiEmitter` is a `MonoBehaviour` class responsible for generating ECS ​​events based on uGui events (press, release, drag, etc).
+Must be placed on the root `GameObject` of the UI hierarchy (or at least on the root `Canvas`) and connected to the ECS infrastructure via the inspector:
+
+```csharp
 using Leopotam.EcsLite.Unity.Ugui;
 
-public class Startup : MonoBehaviour {
-    // Поле должно быть проинициализировано в инспекторе средствами редактора Unity.
+public class Startup : MonoBehaviour
+{
+    // The field must be initialized in the inspector using the Unity editor.
     [SerializeField] EcsUguiEmitter _uguiEmitter;
 
     IEcsSystems _systems;
 
-    void Start () {
+    void Start ()
+    {
         _systems = new EcsSystems (new EcsWorld ());
         _systems
             .Add (new Test1System ())
             .Add (new Test2System ())
-            // Этот вызов должен быть размещен после всех систем,
-            // в которых есть зависимость от uGui-событий.
+            // This call must be placed after all systems
+            // which have a dependency on uGui events.
             .InjectUgui (_uguiEmitter)
             .Init ();
     }
     
-    void Update () {
+    void Update ()
+    {
         _systems?.Update ();
     }
     
-    void OnDestroy () {
-        if (_systems != null) {
+    void OnDestroy ()
+    {
+        if (_systems != null) 
+        {
             _systems.GetWorld ("ugui-events").Destroy ();
             _systems.Destroy ();
             _systems.GetWorld ().Destroy ();
@@ -76,64 +64,77 @@ public class Startup : MonoBehaviour {
     }
 }
 
-public class Test1System : IEcsInitSystem {
-    // Это поле будет автоматически инициализировано
-    // ссылкой на экземпляр эмиттера на сцене.
-    readonly EcsCustomInject<EcsUguiEmitter> _ugui = default;
+public class Test1System : IEcsInitSystem
+{
+    // This field will be automatically initialized
+    // a link to the emitter instance on the stage.
+    readonly EcsCustomInject<EcsFromEmitter> _ugui = default;
     
     GameObject _btnGo;
     Transform _btnTransform;
     Button _btn;
 
-    public void Init (IEcsSystems systems) {
-        // Получение ссылки на виджет-действие с именем "MyButton". 
-        _btnGo = _ugui.GetNamedObject ("MyButton");
-        // Чтение Transform-компонента с него.
+    public void Init (IEcsSystems systems)
+    {
+        // Get a link to a widget action named "MyButton".
+        _btnGo = _ugui.GetNamedObject("MyButton");
+        // Read the Transform component from it.
         _btnTransform = _ugui.GetNamedObject ("MyButton").GetComponent<Transform> ();
-        // Чтение Button-компонента с него.
+        // Read the Button component from it.
         _btn = _ugui.GetNamedObject ("MyButton").GetComponent<Button> ();
     }
 }
 ```
-Пример выше можно упростить через `[EcsUguiNamedAttribute]`:
-```c#
+
+The example above can be simplified with `[EcsUguiNamedAttribute]`:
+
+```csharp
 using Leopotam.EcsLite.Unity.Ugui;
 
-public class Test2System : IEcsInitSystem {
-    // Все поля будут автоматически заполнены ссылками
-    // на соответствующие компоненты с именованного виджета-действия.
+public class Test2System : IEcsInitSystem
+{
+    // All fields will be automatically filled with links
+    // to the corresponding components from the named action widget.
     [EcsUguiNamed("MyButton")] GameObject _btnGo;
     [EcsUguiNamed("MyButton")] Transform _btnTransform;
     [EcsUguiNamed("MyButton")] Button _btn;
 
-    public void Init (IEcsSystems systems) {
-        // Все поля инициализированы и могут быть использованы здесь.
+    public void Init (IEcsSystems systems)
+    {
+        // All fields are initialized and can be used here.
     }
 }
 ```
 
 ## EcsUguiCallbackSystem
-Эта система дает возможность напрямую подписываться на uGui-события без дополнительного кода:
-```c#
+
+This system allows you to directly subscribe to uGui events without additional code:
+
+```csharp
 using Leopotam.EcsLite.Unity.Ugui;
 
-public class TestUguiClickEventSystem : EcsUguiCallbackSystem {
-    [Preserve] // Этот атрибут необходим для сохранения этого метода для il2cpp.
+public class TestUguiClickEventSystem : EcsUguiCallbackSystem
+{
+    [Preserve] // This attribute is required to preserve this method for il2cpp.
     [EcsUguiClickEvent]
-    void OnAnyClick (in EcsUguiClickEvent evt) {
+    void OnAnyClick (in EcsUguiClickEvent evt)
+    {
         Debug.Log ("Im clicked!", evt.Sender);
     }
     
-    // Этот метод будет вызван при нажатии на виджет с действием, имеющим имя "exit-button". 
+    // This method will be called when clicking on a widget with an action named "exit-button".
     [Preserve]
     [EcsUguiClickEvent("exit-button")]
-    void OnExitButtonClicked (in EcsUguiClickEvent evt) {
+    void OnExitButtonClicked (in EcsUguiClickEvent evt)
+    {
         Debug.Log ("exit-button clicked!", evt.Sender);
     }
 }
 ```
-Список поддерживаемых атрибутов действий (событий uGui):
-```c#
+
+List of supported action attributes (uGui events):
+
+```csharp
 [EcsUguiClickEvent]
 [EcsUguiUpEvent]
 [EcsUguiDownEvent]
@@ -149,36 +150,38 @@ public class TestUguiClickEventSystem : EcsUguiCallbackSystem {
 [EcsUguiTmpInputEndEvent]
 [EcsUguiDropEvent]
 ```
-## Действия
-Действия (классы `xxxAction`) - это `MonoBehaviour`-компоненты, которые слушают события uGui виджетов, ищут `EcsUiEmitter` по иерархии вверх и вызывают генерацию соответствующих событий для ECS-мира.
 
-## Компоненты
-ECS-компоненты, описывающие события: `EcsUguiClickEvent`, `EcsUguiBeginDragEvent`, `EcsUguiEndDragEvent` и т.д. - все они являются стандартными ECS-компонентами и могут быть отфильтрованы с помощью `EcsFilter`:
-```c#
+## Actions
+
+Actions (classes `xxxAction`) are `MonoBehaviour` components that listen for uGui widget events, look up `EcsUiEmitter` up the hierarchy, and cause the appropriate events to be generated for the ECS world.
+
+## Components
+
+ECS components describing events: `EcsUguiClickEvent`, `EcsUguiBeginDragEvent`, `EcsUguiEndDragEvent`, etc. - they are all standard ECS components and can be filtered with `EcsFilter`:
+
+```csharp
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Unity.Ugui;
 
-public class TestUguiClickEventSystem : IEcsInitSystem, IEcsRunSystem {
+public class TestUguiClickEventSystem : IEcsInitSystem, IEcsRunSystem
+{
     EcsPool<EcsUguiClickEvent> _clickEventsPool;
     EcsFilter _clickEvents;
     
-    public void Init (IEcsSystems systems) {
+    public void Init (IEcsSystems systems) 
+    {
         var world = systems.GetWorld ();
         _clickEventsPool = world.GetPool<EcsUguiClickEvent> (); 
         _clickEvents = world.Filter<EcsUguiClickEvent> ().End ();
     }
 
-    public void Run (IEcsSystems systems) {
-        foreach (var entity in _clickEvents) {
+    public void Run (IEcsSystems systems) 
+    {
+        foreach (var entity in _clickEvents) 
+        {
             ref EcsUguiClickEvent data = ref _clickEventsPool.Get (entity);
             Debug.Log ("Im clicked!", data.Sender);
         }
     }
 }
 ```
-
-# Лицензия
-Пакет выпускается под [MIT-Red лицензией](./LICENSE.md).
-
-В случаях лицензирования по условиям MIT-Red не стоит расчитывать на
-персональные консультации или какие-либо гарантии.
