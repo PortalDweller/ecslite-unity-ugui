@@ -1,20 +1,20 @@
 {
-    "name": "com.leopotam.ecslite.unity.ugui",
-    "author": "Leopotam",
-    "displayName": "LeoECS Lite uGui Bindings",
-    "description": "LeoECS Lite uGui Bindings - поддержка событий uGui в ECS-мире.",
-    "unity": "2020.3",
-    "version": "2025.4.22",
-    "keywords": [
-        "leoecslite",
-        "leoecs",
-        "ecs",
-        "performance",
-        "ui"
-    ],
-    "dependencies": {},
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Leopotam/ecslite-unity-ugui.git"
-    }
+  "name": "com.portaldweller.ecslite.unity.ugui",
+  "author": "PortalDweller",
+  "displayName": "LeoECS Lite uGui Bindings (PortalDweller fork)",
+  "description": "LeoECS Lite uGui Bindings (PortalDweller fork)",
+  "unity": "2020.3",
+  "version": "2025.6.04",
+  "keywords": [
+    "leoecslite",
+    "leoecs",
+    "ecs",
+    "performance",
+    "ui"
+  ],
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PortalDweller/ecslite-unity-ugui.git"
+  }
 }
