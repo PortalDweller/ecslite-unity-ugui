@@ -149,6 +149,11 @@ List of supported action attributes (uGui events):
 [EcsUguiTmpInputChangeEvent]
 [EcsUguiTmpInputEndEvent]
 [EcsUguiDropEvent]
+// events added in this fork
+[EcsUguiCancelEvent]
+[EcsUguiClickOrSubmitEvent]
+[EcsUguiSelectEvent]
+[EcsUguiSubmitEvent]
 ```
 
 ## Actions
