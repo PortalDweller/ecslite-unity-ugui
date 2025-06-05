@@ -75,6 +75,27 @@ namespace Leopotam.EcsLite.Unity.Ugui {
         public EcsUguiDropEventAttribute (string widgetName = default, string worldName = default) : base (widgetName, worldName) { }
     }
 
+
+    public sealed class EcsUguiCancelEventAttribute : EcsUguiEventAttribute
+    {
+        public EcsUguiCancelEventAttribute(string widgetName = default, string worldName = default) : base(widgetName, worldName) { }
+    }
+
+    public sealed class EcsUguiSubmitEventAttribute : EcsUguiEventAttribute
+    {
+        public EcsUguiSubmitEventAttribute(string widgetName = default, string worldName = default) : base(widgetName, worldName) { }
+    }
+
+    public sealed class EcsUguiClickOrSubmitEventAttribute : EcsUguiEventAttribute
+    {
+        public EcsUguiClickOrSubmitEventAttribute(string widgetName = default, string worldName = default) : base(widgetName, worldName) { }
+    }
+
+    public sealed class EcsUguiSelectEventAttribute : EcsUguiEventAttribute
+    {
+        public EcsUguiSelectEventAttribute(string widgetName = default, string worldName = default) : base(widgetName, worldName) { }
+    }
+
     public delegate void UserCallback<T> (in T e) where T : struct;
 
     public abstract class EcsUguiCallbackSystem : IEcsPreInitSystem, IEcsRunSystem {
@@ -107,6 +128,11 @@ namespace Leopotam.EcsLite.Unity.Ugui {
         List<UguiEventDesc<EcsUguiTmpInputEndEvent>> _tmpInputEnds;
         List<UguiEventDesc<EcsUguiDropEvent>> _drops;
 
+        List<UguiEventDesc<EcsUguiCancelEvent>> _cancels;
+        List<UguiEventDesc<EcsUguiSubmitEvent>> _submits;
+        List<UguiEventDesc<EcsUguiClickOrSubmitEvent>> _clicksOrSubmits;
+        List<UguiEventDesc<EcsUguiSelectEvent>> _selects;
+
         public void PreInit (IEcsSystems systems) {
             foreach (var m in GetType ().GetMethods (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
                 if (m.IsStatic) { continue; }
@@ -125,6 +151,11 @@ namespace Leopotam.EcsLite.Unity.Ugui {
                 CheckAttribute<EcsUguiTmpInputChangeEventAttribute, EcsUguiTmpInputChangeEvent> (m, systems, this, ref _tmpInputChanges);
                 CheckAttribute<EcsUguiTmpInputEndEventAttribute, EcsUguiTmpInputEndEvent> (m, systems, this, ref _tmpInputEnds);
                 CheckAttribute<EcsUguiDropEventAttribute, EcsUguiDropEvent> (m, systems, this, ref _drops);
+
+                CheckAttribute<EcsUguiCancelEventAttribute, EcsUguiCancelEvent>(m, systems, this, ref _cancels);
+                CheckAttribute<EcsUguiSubmitEventAttribute, EcsUguiSubmitEvent>(m, systems, this, ref _submits);
+                CheckAttribute<EcsUguiClickOrSubmitEventAttribute, EcsUguiClickOrSubmitEvent>(m, systems, this, ref _clicksOrSubmits);
+                CheckAttribute<EcsUguiSelectEventAttribute, EcsUguiSelectEvent>(m, systems, this, ref _selects);
             }
         }
 
@@ -238,6 +269,55 @@ namespace Leopotam.EcsLite.Unity.Ugui {
                     foreach (var entity in item.Filter) {
                         ref var e = ref item.Pool.Get (entity);
                         CallUserMethod (e, e.WidgetName, item);
+                    }
+                }
+            }
+
+
+            if (_cancels != null)
+            {
+                foreach (var item in _cancels)
+                {
+                    foreach (var entity in item.Filter)
+                    {
+                        ref var e = ref item.Pool.Get(entity);
+                        CallUserMethod(e, e.WidgetName, item);
+                    }
+                }
+            }
+
+            if (_submits != null)
+            {
+                foreach (var item in _submits)
+                {
+                    foreach (var entity in item.Filter)
+                    {
+                        ref var e = ref item.Pool.Get(entity);
+                        CallUserMethod(e, e.WidgetName, item);
+                    }
+                }
+            }
+
+            if (_clicksOrSubmits != null)
+            {
+                foreach (var item in _clicksOrSubmits)
+                {
+                    foreach (var entity in item.Filter)
+                    {
+                        ref var e = ref item.Pool.Get(entity);
+                        CallUserMethod(e, e.WidgetName, item);
+                    }
+                }
+            }
+
+            if (_selects != null)
+            {
+                foreach (var item in _selects)
+                {
+                    foreach (var entity in item.Filter)
+                    {
+                        ref var e = ref item.Pool.Get(entity);
+                        CallUserMethod(e, e.WidgetName, item);
                     }
                 }
             }

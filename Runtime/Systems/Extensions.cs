@@ -113,6 +113,11 @@ namespace Leopotam.EcsLite.Unity.Ugui {
             ecsSystems.Add (new DelUguiEventSystem<EcsUguiTmpDropdownChangeEvent> (world));
             ecsSystems.Add (new DelUguiEventSystem<EcsUguiTmpInputChangeEvent> (world));
             ecsSystems.Add (new DelUguiEventSystem<EcsUguiTmpInputEndEvent> (world));
+
+            ecsSystems.Add(new DelUguiEventSystem<EcsUguiCancelEvent>(world));
+            ecsSystems.Add(new DelUguiEventSystem<EcsUguiSubmitEvent>(world));
+            ecsSystems.Add(new DelUguiEventSystem<EcsUguiClickOrSubmitEvent>(world));
+            ecsSystems.Add(new DelUguiEventSystem<EcsUguiSelectEvent>(world));
         }
     }
 }
