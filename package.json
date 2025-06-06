@@ -1,8 +1,8 @@
 {
   "name": "com.portaldweller.ecslite.unity.ugui",
   "author": "PortalDweller",
-  "displayName": "LeoECS Lite uGui Bindings (PortalDweller fork)",
-  "description": "LeoECS Lite uGui Bindings (PortalDweller fork)",
+  "displayName": "PortalDweller LeoECS Lite uGui Bindings",
+  "description": "PortalDweller LeoECS Lite uGui Bindings",
   "unity": "2020.3",
   "version": "2025.6.4",
   "keywords": [
