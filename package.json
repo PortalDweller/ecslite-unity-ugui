@@ -4,7 +4,7 @@
   "displayName": "PortalDweller LeoECS Lite uGui Bindings",
   "description": "PortalDweller LeoECS Lite uGui Bindings",
   "unity": "2020.3",
-  "version": "2025.6.4",
+  "version": "2025.6.7",
   "keywords": [
     "leoecslite",
     "leoecs",
@@ -15,6 +15,6 @@
   "dependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/portaldweller/ecslite-unity-ugui.git"
+    "url": "https://github.com/PortalDweller/ecslite-unity-ugui.git"
   }
 }
